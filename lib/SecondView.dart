@@ -14,19 +14,17 @@ class SecondView extends StatefulWidget {
 
 class _SecondViewState extends State<SecondView> {
   //hade problem med null värden, late gör att den inte körs förens den är kallad vilket gör att den inte blir null
-  late String message;
-  late bool true_false;
+  late String TodoText;
   late TextEditingController textEditingController;
 
   _SecondViewState(TodoBox box) {
-    this.message = box.TodoText;
-    this.true_false = box.true_false;
+    this.TodoText = box.TodoText;
 
     textEditingController = TextEditingController();
 
     textEditingController.addListener(() {
       setState(() {
-        message = textEditingController.text;
+        TodoText = textEditingController.text;
       });
     });
   }
@@ -71,8 +69,7 @@ class _SecondViewState extends State<SecondView> {
                   Navigator.pop(
                       context,
                       TodoBox(
-                        TodoText: message,
-                        true_false: true_false,
+                        TodoText: TodoText,
                       )); // textEditingController.text, false
                 },
               ),

@@ -8,7 +8,7 @@ class TodoBox {
 
   TodoBox(
       {this.id = '',
-      this.TodoText = 'null',
+      required this.TodoText,
       this.true_false =
           false}); //igen problem med null värden, todotext får inte vara null
 
