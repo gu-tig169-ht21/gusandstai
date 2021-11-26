@@ -3,31 +3,28 @@ import './api.dart';
 
 class TodoBox {
   String id;
-  String TodoText;
-  bool true_false;
+  String? title; // ? = innebär att den får lov att vara null
+  bool done;
 
   TodoBox(
       {this.id = '',
-      required this.TodoText,
-      this.true_false =
-          false}); //igen problem med null värden, todotext får inte vara null
+      this.title,
+      this.done =
+          false}); //igen problem med null värden, title får inte vara null
 
-  void toggleDone(TodoBox activity) {
-    true_false = !true_false;
+  void toggleDone(TodoBox box) {
+    done = !done;
   }
 
-  static Map<String, dynamic> toJson(TodoBox activity) {
+  static Map<String, dynamic> toJson(TodoBox box) {
     return {
-      'TodoText': activity.TodoText,
-      'true_false': (activity.true_false),
+      'title': box.title,
+      'done': (box.done),
     };
   }
 
   static TodoBox fromJson(Map<String, dynamic> json) {
-    return TodoBox(
-        id: json['id'],
-        TodoText: json['TodoText'],
-        true_false: json['true_false']);
+    return TodoBox(id: json['id'], title: json['title'], done: json['done']);
   }
 }
 
@@ -51,6 +48,12 @@ class TodoList extends ChangeNotifier {
 
   void addTodoBox(TodoBox box) async {
     _list = await Api.addBox(box);
+    notifyListeners();
+  }
+
+  void done(TodoBox box) async {
+    box.toggleDone(box);
+    _list = await Api.putBoxApi(box);
     notifyListeners();
   }
 }

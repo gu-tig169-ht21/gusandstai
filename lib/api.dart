@@ -6,9 +6,10 @@ const API_KEY = '7621f30b-468a-4969-89a5-57b6dd847eba';
 const API_URL = 'https://todoapp-api-pyq5q.ondigitalocean.app';
 
 class Api {
-  static Future<List<TodoBox>> addBox(TodoBox activity) async {
-    Map<String, dynamic> json = TodoBox.toJson(activity);
+  static Future<List<TodoBox>> addBox(TodoBox box) async {
+    Map<String, dynamic> json = TodoBox.toJson(box);
     var bodyString = jsonEncode(json);
+    print(bodyString);
     var response = await http.post(
       Uri.parse('$API_URL/todos?key=$API_KEY'),
       body: bodyString,
@@ -23,26 +24,26 @@ class Api {
     }).toList(); //samlar alla elementen i den här strömmen i en List
   }
 
-  static Future removeBox(String activityId) async {
-    var response = await http.delete(
-        Uri.parse('$API_URL/todos/$activityId?key=$API_KEY&_confirm=true'));
+  static Future removeBox(String boxId) async {
+    var response = await http
+        .delete(Uri.parse('$API_URL/todos/$boxId?key=$API_KEY&_confirm=true'));
     var bodyString = response.body;
     var list = jsonDecode(bodyString);
 
     print(bodyString);
-    print(activityId);
+    print(boxId);
 
     return list.map<TodoBox>((data) {
       return TodoBox.fromJson(data);
     }).toList();
   }
 
-  static Future put_ActivityApi(TodoBox activity) async {
-    Map<String, dynamic> json = TodoBox.toJson(activity);
+  static Future putBoxApi(TodoBox box) async {
+    Map<String, dynamic> json = TodoBox.toJson(box);
     var bodyString = jsonEncode(json);
-    var activityId = activity.id;
+    var boxId = box.id;
     var response = await http.put(
-      Uri.parse('$API_URL/todos/$activityId?key=$API_KEY'),
+      Uri.parse('$API_URL/todos/$boxId?key=$API_KEY'),
       body: bodyString,
       headers: {'Content-Type': 'application/json'},
     );
@@ -50,7 +51,7 @@ class Api {
     var list = jsonDecode(bodyString);
 
     print(bodyString);
-    print(activityId);
+    print(boxId);
 
     return list.map<TodoBox>((data) {
       return TodoBox.fromJson(data);

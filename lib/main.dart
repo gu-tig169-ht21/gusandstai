@@ -5,9 +5,12 @@ import './model.dart';
 import 'package:http/http.dart' as http; //as = namespace
 
 void main() {
+  var state = TodoList();
+  state.getList();
+
   runApp(
     ChangeNotifierProvider(
-      create: (context) => (TodoList()),
+      create: (context) => state,
       child: MyApp(),
     ),
   );
@@ -51,8 +54,7 @@ class _MainViewState extends State<MainView> {
           var newTodo = await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  SecondView(TodoBox(TodoText: 'TodoText', true_false: false)),
+              builder: (context) => SecondView(TodoBox(title: '', done: false)),
             ),
           );
           if (newTodo != null) {
@@ -71,16 +73,16 @@ class _MainViewState extends State<MainView> {
 
   Widget _CheckBox(TodoBox checkbox) {
     return CheckboxListTile(
-      value: checkbox.true_false,
+      value: checkbox.done,
       activeColor: Colors.blue,
       title: Text(
-        checkbox.TodoText,
+        checkbox.title!,
         style: TextStyle(
           fontSize: 20,
-          decoration: checkbox.true_false ? TextDecoration.lineThrough : null,
+          decoration: checkbox.done ? TextDecoration.lineThrough : null,
         ),
       ),
-      onChanged: (value) => setState(() => checkbox.true_false = value!),
+      onChanged: (value) => setState(() => checkbox.done = value!),
       secondary: IconButton(
           icon: const Icon(Icons.delete),
           onPressed: () async {

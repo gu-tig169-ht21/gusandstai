@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import './model.dart';
 
 class SecondView extends StatefulWidget {
-  final TodoBox checkbox;
+  final TodoBox box;
 
-  SecondView(this.checkbox);
+  SecondView(this.box);
 
   @override
   State<StatefulWidget> createState() {
-    return _SecondViewState(checkbox);
+    return _SecondViewState(box);
   }
 }
 
@@ -18,7 +18,7 @@ class _SecondViewState extends State<SecondView> {
   late TextEditingController textEditingController;
 
   _SecondViewState(TodoBox box) {
-    this.TodoText = box.TodoText;
+    this.TodoText = box.title!;
 
     textEditingController = TextEditingController();
 
@@ -69,7 +69,7 @@ class _SecondViewState extends State<SecondView> {
                   Navigator.pop(
                       context,
                       TodoBox(
-                        TodoText: TodoText,
+                        title: TodoText,
                       )); // textEditingController.text, false
                 },
               ),
