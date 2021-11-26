@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import './SecondView.dart';
 import 'package:provider/provider.dart';
 import './model.dart';
+import 'package:http/http.dart' as http; //as = namespace
 
 void main() {
   runApp(
@@ -50,7 +51,8 @@ class _MainViewState extends State<MainView> {
           var newTodo = await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => SecondView(TodoBox('', false)),
+              builder: (context) =>
+                  SecondView(TodoBox(TodoText: 'TodoText', true_false: false)),
             ),
           );
           if (newTodo != null) {

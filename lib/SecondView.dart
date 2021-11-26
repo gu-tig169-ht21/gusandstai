@@ -69,7 +69,11 @@ class _SecondViewState extends State<SecondView> {
                 child: const Text('Add'),
                 onPressed: () {
                   Navigator.pop(
-                      context, TodoBox(textEditingController.text, false));
+                      context,
+                      TodoBox(
+                        TodoText: message,
+                        true_false: true_false,
+                      )); // textEditingController.text, false
                 },
               ),
             ),
@@ -79,5 +83,3 @@ class _SecondViewState extends State<SecondView> {
     );
   }
 }
-
-
