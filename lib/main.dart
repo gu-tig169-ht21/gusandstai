@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
+import './SecondView.dart';
+import 'package:provider/provider.dart';
+import './model.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => (TodoList()),
+      child: MyApp(),
+    ),
+  );
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -11,118 +21,70 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MainView extends StatelessWidget {
+class MainView extends StatefulWidget {
+  //göra om till en statefulwidget
+  const MainView({Key? key})
+      : super(
+            key:
+                key); // vet ej vad detta är, vet att const innebär att vi vet värdet och att det inte ändras
+  @override
+  _MainViewState createState() => _MainViewState();
+}
+
+class _MainViewState extends State<MainView> {
+  final List<String> _TodoBox = <String>[];
+  final TextEditingController _textFieldController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('TIG169 TODO'),
-        actions: [
-          IconButton(
-              icon: Icon(Icons
-                  .arrow_right_alt_rounded), //knappen är gömd bakim "debug" men den funkar
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SecondView()),
-                );
-              }),
-        ],
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _checkboxRow(),
-            _add(),
-            _box(),
-          ],
-        ),
+          title: const Text('TIG169 TODO'),
+          actions: []), //ska lägga till filtrering sen
+      body: Consumer<TodoList>(
+          builder: (context, state, child) => _field((state.list))),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add_task_rounded),
+        backgroundColor: Colors.blue,
+        onPressed: () async {
+          var newTodo = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SecondView(TodoBox('', false)),
+            ),
+          );
+          if (newTodo != null) {
+            Provider.of<TodoList>(context, listen: false).addTodoBox(newTodo);
+          }
+        },
       ),
     );
   }
 
-  Widget _appbar() {
-    return Container(
-        height: 58,
-        decoration: BoxDecoration(color: Colors.blue),
-        child: Center());
+  Widget _field(title) {
+    return ListView.builder(
+        itemBuilder: (context, index) => _CheckBox(title[index]),
+        itemCount: title.length);
   }
-}
 
-Widget _checkboxRow() {
-  return Row(
-    children: [
-      Checkbox(
-        value: false,
-        onChanged: (val) {},
-      ),
-      Text('Tvätta'),
-      Icon(Icons.delete),
-    ],
-  );
-}
-
-Widget _add() {
-  return Row(
-    children: [
-      Checkbox(
-        value: true,
-        onChanged: (val) {},
-      ),
-      Text('Diska', style: TextStyle(decoration: TextDecoration.lineThrough)),
-      Icon(Icons.delete),
-    ],
-  );
-}
-
-Widget _box() {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      Icon(
-        Icons.add_box_rounded,
-        size: 50,
-      ),
-    ],
-  );
-}
-
-class SecondView extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: _field(),
-    );
-  }
-}
-
-Widget _field() {
-  return ListView(
-    children: [
-      Container(
-        margin: EdgeInsets.only(left: 16, right: 16),
-        child: TextField(
-          decoration: InputDecoration(hintText: 'Vad ska du göra'),
+  Widget _CheckBox(TodoBox checkbox) {
+    return CheckboxListTile(
+      value: checkbox.true_false,
+      activeColor: Colors.blue,
+      title: Text(
+        checkbox.TodoText,
+        style: TextStyle(
+          fontSize: 20,
+          decoration: checkbox.true_false ? TextDecoration.lineThrough : null,
         ),
       ),
-      Container(height: 24), //flytta på addknappen
-      _plusbox(),
-    ],
-  );
-}
-
-Widget _plusbox() {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.center, //lägger till knappen i mitten
-    children: [
-      Icon(
-        Icons.add,
-        size: 12,
-      ),
-      Text('Add'),
-    ],
-  );
+      onChanged: (value) => setState(() => checkbox.true_false = value!),
+      secondary: IconButton(
+          icon: const Icon(Icons.delete),
+          onPressed: () async {
+            var state = Provider.of<TodoList>(context, listen: false);
+            state.DeleteTodoBox(checkbox);
+          }),
+    );
+  }
 }
