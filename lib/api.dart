@@ -7,9 +7,10 @@ const API_URL = 'https://todoapp-api-pyq5q.ondigitalocean.app';
 
 class Api {
   static Future<List<TodoBox>> addBox(TodoBox box) async {
+    //print(box.title);
     Map<String, dynamic> json = TodoBox.toJson(box);
     var bodyString = jsonEncode(json);
-    print(bodyString);
+    //print(bodyString);
     var response = await http.post(
       Uri.parse('$API_URL/todos?key=$API_KEY'),
       body: bodyString,
@@ -18,7 +19,7 @@ class Api {
     bodyString = response.body;
 
     var list = jsonDecode(bodyString);
-
+    //print(list);
     return list.map<TodoBox>((data) {
       return TodoBox.fromJson(data);
     }).toList(); //samlar alla elementen i den här strömmen i en List
@@ -30,9 +31,6 @@ class Api {
     var bodyString = response.body;
     var list = jsonDecode(bodyString);
 
-    print(bodyString);
-    print(boxId);
-
     return list.map<TodoBox>((data) {
       return TodoBox.fromJson(data);
     }).toList();
@@ -42,6 +40,7 @@ class Api {
     Map<String, dynamic> json = TodoBox.toJson(box);
     var bodyString = jsonEncode(json);
     var boxId = box.id;
+    // print(bodyString);
     var response = await http.put(
       Uri.parse('$API_URL/todos/$boxId?key=$API_KEY'),
       body: bodyString,
@@ -49,10 +48,7 @@ class Api {
     );
     bodyString = response.body;
     var list = jsonDecode(bodyString);
-
     print(bodyString);
-    print(boxId);
-
     return list.map<TodoBox>((data) {
       return TodoBox.fromJson(data);
     }).toList();
@@ -63,10 +59,8 @@ class Api {
         headers: {'Content-Type': 'application/json'});
 
     var bodyString = response.body;
-
     print(bodyString);
     var json = jsonDecode(bodyString);
-
     return json.map<TodoBox>((data) {
       return TodoBox.fromJson(data);
     }).toList();

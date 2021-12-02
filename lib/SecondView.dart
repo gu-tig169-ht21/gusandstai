@@ -32,7 +32,6 @@ class _SecondViewState extends State<SecondView> {
   @override
   void initState() {
     super.initState();
-    textEditingController = TextEditingController();
   }
 
   @override
@@ -70,7 +69,7 @@ class _SecondViewState extends State<SecondView> {
                       context,
                       TodoBox(
                         title: TodoText,
-                      )); // textEditingController.text, false
+                      )); 
                 },
               ),
             ),

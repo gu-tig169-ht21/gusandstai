@@ -30,9 +30,9 @@ class TodoBox {
 
 class TodoList extends ChangeNotifier {
   List<TodoBox> _list = [];
-  List<TodoBox> get list {
-    return _list;
-  }
+  List<TodoBox> get list => _list;
+  int _filterBy = 1;
+  int get filterBy => _filterBy;
 
 //lägga till en massa async funktioner
   Future getList() async {
@@ -53,7 +53,13 @@ class TodoList extends ChangeNotifier {
 
   void done(TodoBox box) async {
     box.toggleDone(box);
+
     _list = await Api.putBoxApi(box);
+    notifyListeners();
+  }
+
+  void setFilterBy(int filterBy) {
+    _filterBy = filterBy;
     notifyListeners();
   }
 }
