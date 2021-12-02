@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './SecondView.dart';
+import 'second_view.dart';
 import 'package:provider/provider.dart';
 import './model.dart';
 import 'package:http/http.dart' as http; //as = namespace
@@ -11,12 +11,14 @@ void main() {
   runApp(
     ChangeNotifierProvider(
       create: (context) => state,
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,7 +28,6 @@ class MyApp extends StatelessWidget {
 }
 
 class MainView extends StatefulWidget {
-  //göra om till en statefulwidget
   const MainView({Key? key})
       : super(
             key: key); //const innebär att vi vet värdet och att det inte ändras

@@ -69,7 +69,7 @@ class _SecondViewState extends State<SecondView> {
                       context,
                       TodoBox(
                         title: TodoText,
-                      )); 
+                      ));
                 },
               ),
             ),

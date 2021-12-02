@@ -6,11 +6,7 @@ class TodoBox {
   String? title; // ? = innebär att den får lov att vara null
   bool done;
 
-  TodoBox(
-      {this.id = '',
-      this.title,
-      this.done =
-          false}); //igen problem med null värden, title får inte vara null
+  TodoBox({this.id = '', this.title, this.done = false});
 
   void toggleDone(TodoBox box) {
     done = !done;
@@ -34,7 +30,6 @@ class TodoList extends ChangeNotifier {
   int _filterBy = 1;
   int get filterBy => _filterBy;
 
-//lägga till en massa async funktioner
   Future getList() async {
     List<TodoBox> list = await Api.getBox();
     _list = list;
@@ -51,7 +46,7 @@ class TodoList extends ChangeNotifier {
     notifyListeners();
   }
 
-  void done(TodoBox box) async {
+  void done(TodoBox box) async { 
     box.toggleDone(box);
 
     _list = await Api.putBoxApi(box);
