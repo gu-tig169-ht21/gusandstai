@@ -1,8 +1,24 @@
 import 'package:flutter/material.dart';
+import 'second_view.dart';
+import 'package:provider/provider.dart';
+import './model.dart';
+import 'package:http/http.dart' as http; //as = namespace
 
-void main() => runApp(MyApp());
+void main() {
+  var state = TodoList();
+  state.getList();
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => state,
+      child: const MyApp(),
+    ),
+  );
+}
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -11,118 +27,95 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MainView extends StatelessWidget {
+class MainView extends StatefulWidget {
+  const MainView({Key? key})
+      : super(
+            key: key); //const innebär att vi vet värdet och att det inte ändras
+  @override
+  _MainViewState createState() => _MainViewState();
+}
+
+class _MainViewState extends State<MainView> {
+  final List<String> _TodoBox = <String>[];
+  final TextEditingController _textFieldController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('TIG169 TODO'),
+        title: const Text('TIG169 TODO'),
         actions: [
-          IconButton(
-              icon: Icon(Icons
-                  .arrow_right_alt_rounded), //knappen är gömd bakim "debug" men den funkar
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SecondView()),
-                );
-              }),
+          PopupMenuButton(
+              onSelected: (int value) {
+                Provider.of<TodoList>(context, listen: false)
+                    .setFilterBy(value);
+              },
+              itemBuilder: (context) => [
+                    const PopupMenuItem(child: Text('Alla'), value: 1),
+                    const PopupMenuItem(child: Text('Färdiga'), value: 2),
+                    const PopupMenuItem(child: Text('Inte färdiga'), value: 3),
+                  ]),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _checkboxRow(),
-            _add(),
-            _box(),
-          ],
-        ),
+      body: Consumer<TodoList>(
+          builder: (context, state, child) =>
+              _field(_filterList(state.list, state.filterBy))),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add_task_rounded),
+        backgroundColor: Colors.blue,
+        onPressed: () async {
+          var newTodo = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SecondView(TodoBox(title: '', done: false)),
+            ),
+          );
+          if (newTodo != null) {
+            Provider.of<TodoList>(context, listen: false).addTodoBox(newTodo);
+          }
+        },
       ),
     );
   }
 
-  Widget _appbar() {
-    return Container(
-        height: 58,
-        decoration: BoxDecoration(color: Colors.blue),
-        child: Center());
+  List<TodoBox> _filterList(list, value) {
+    // definiera filterlist, gör den privat
+    if (value == 1) return list;
+    if (value == 2) {
+      return list.where((box) => box.done == true).toList();
+    }
+    if (value == 3) {
+      return list.where((box) => box.done == false).toList();
+    }
+    return list;
   }
-}
 
-Widget _checkboxRow() {
-  return Row(
-    children: [
-      Checkbox(
-        value: false,
-        onChanged: (val) {},
-      ),
-      Text('Tvätta'),
-      Icon(Icons.delete),
-    ],
-  );
-}
-
-Widget _add() {
-  return Row(
-    children: [
-      Checkbox(
-        value: true,
-        onChanged: (val) {},
-      ),
-      Text('Diska', style: TextStyle(decoration: TextDecoration.lineThrough)),
-      Icon(Icons.delete),
-    ],
-  );
-}
-
-Widget _box() {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      Icon(
-        Icons.add_box_rounded,
-        size: 50,
-      ),
-    ],
-  );
-}
-
-class SecondView extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: _field(),
-    );
+  Widget _field(title) {
+    return ListView.builder(
+        itemBuilder: (context, index) => _CheckBox(title[index]),
+        itemCount: title.length);
   }
-}
 
-Widget _field() {
-  return ListView(
-    children: [
-      Container(
-        margin: EdgeInsets.only(left: 16, right: 16),
-        child: TextField(
-          decoration: InputDecoration(hintText: 'Vad ska du göra'),
+  Widget _CheckBox(TodoBox checkbox) {
+    var state = Provider.of<TodoList>(context, listen: false);
+    return CheckboxListTile(
+        activeColor: Colors.blue,
+        title: Text(
+          checkbox.title!,
+          style: TextStyle(
+            fontSize: 20,
+            decoration: checkbox.done ? TextDecoration.lineThrough : null,
+          ),
         ),
-      ),
-      Container(height: 24), //flytta på addknappen
-      _plusbox(),
-    ],
-  );
-}
-
-Widget _plusbox() {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.center, //lägger till knappen i mitten
-    children: [
-      Icon(
-        Icons.add,
-        size: 12,
-      ),
-      Text('Add'),
-    ],
-  );
+        secondary: IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () async {
+              state.DeleteTodoBox(checkbox);
+            }),
+        controlAffinity: ListTileControlAffinity.leading,
+        value: checkbox.done,
+        onChanged: (value) {
+          state.done(checkbox);
+        });
+  }
 }
