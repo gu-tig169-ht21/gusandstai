@@ -2,31 +2,29 @@ import 'package:flutter/material.dart';
 import './model.dart';
 
 class SecondView extends StatefulWidget {
-  final TodoBox checkbox;
+  final TodoBox box;
 
-  SecondView(this.checkbox);
+  SecondView(this.box);
 
   @override
   State<StatefulWidget> createState() {
-    return _SecondViewState(checkbox);
+    return _SecondViewState(box);
   }
 }
 
 class _SecondViewState extends State<SecondView> {
   //hade problem med null värden, late gör att den inte körs förens den är kallad vilket gör att den inte blir null
-  late String message;
-  late bool true_false;
+  late String TodoText;
   late TextEditingController textEditingController;
 
   _SecondViewState(TodoBox box) {
-    this.message = box.TodoText;
-    this.true_false = box.true_false;
+    this.TodoText = box.title!;
 
     textEditingController = TextEditingController();
 
     textEditingController.addListener(() {
       setState(() {
-        message = textEditingController.text;
+        TodoText = textEditingController.text;
       });
     });
   }
@@ -34,7 +32,6 @@ class _SecondViewState extends State<SecondView> {
   @override
   void initState() {
     super.initState();
-    textEditingController = TextEditingController();
   }
 
   @override
@@ -58,10 +55,7 @@ class _SecondViewState extends State<SecondView> {
               controller: textEditingController,
             ),
             Container(
-              margin: EdgeInsets.only(
-                  left: 16,
-                  right:
-                      16), //den verkar inte göra sitt jobb längre men får det inte att funka utan den...
+              margin: EdgeInsets.only(left: 16, right: 16),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   primary: Colors.blue,
@@ -69,7 +63,10 @@ class _SecondViewState extends State<SecondView> {
                 child: const Text('Add'),
                 onPressed: () {
                   Navigator.pop(
-                      context, TodoBox(textEditingController.text, false));
+                      context,
+                      TodoBox(
+                        title: TodoText,
+                      ));
                 },
               ),
             ),
@@ -79,5 +76,3 @@ class _SecondViewState extends State<SecondView> {
     );
   }
 }
-
-
