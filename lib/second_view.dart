@@ -55,10 +55,7 @@ class _SecondViewState extends State<SecondView> {
               controller: textEditingController,
             ),
             Container(
-              margin: EdgeInsets.only(
-                  left: 16,
-                  right:
-                      16), //den verkar inte göra sitt jobb längre men får det inte att funka utan den...
+              margin: EdgeInsets.only(left: 16, right: 16),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   primary: Colors.blue,
